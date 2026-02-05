@@ -43,6 +43,8 @@ npm run cli -- --url http://localhost:3000/api/conversation --key honeypot-guvi-
 The tester exposes `POST /callback` (configurable via `CALLBACK_PATH`).
 Set `PUBLIC_BASE_URL` to your LAN IP for callbacks from a remote honeypot server.
 
+If your honeypot does not call back, the tester still prints a local callback inference that includes `scamDetected`, `totalMessagesExchanged`, and `extractedIntelligence`.
+
 ## Logs
 
 Conversation logs are saved to `logs/<sessionId>.json`.

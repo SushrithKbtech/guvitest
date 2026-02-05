@@ -24,6 +24,19 @@ function phaseForTurn(turn) {
   return 'phase4';
 }
 
+function detectRequests(victimMessage) {
+  const text = (victimMessage || '').toLowerCase();
+  return {
+    wantsEmployeeId: /(employee id|emp id|id number|badge)/i.test(text),
+    wantsDepartment: /(department|dept)/i.test(text),
+    wantsPhone: /(callback|call back|phone|number|official number|contact)/i.test(text),
+    wantsBranch: /(branch)/i.test(text),
+    wantsLink: /(link|website|url|verify online|verification link)/i.test(text),
+    wantsUpi: /(upi|vpa)/i.test(text),
+    wantsAccount: /(account number|acct|a\/c|bank account)/i.test(text)
+  };
+}
+
 function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needsAnswer }) {
   const historyText = conversationHistory
     .slice(-10)
@@ -31,16 +44,18 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     .join('\n');
 
   const phase = phaseForTurn(turn);
+  const requests = detectRequests(victimMessage);
   const phaseInstruction = {
     phase1: 'Initial urgent message about account issue. Create urgency.',
-    phase2: 'Provide fake credentials (employee ID, department, phone).',
-    phase3: 'Pressure for OTP/PIN/account details or phishing link.',
+    phase2: 'Provide fake credentials only if asked (employee ID, department, phone).',
+    phase3: 'Pressure for OTP/PIN/account details. Only share phishing link if asked for verification.',
     phase4: 'Get aggressive or repeat urgency if victim delays.'
   }[phase];
 
   const scenarioDetails = `ORG: ${scenario.orgNames.join(', ')}\nDEPARTMENT: ${scenario.department}\nEMPLOYEE ID: ${scenario.employeeId}\nPHONE: ${scenario.phoneNumber}\nPHISHING LINK: ${scenario.phishingLink}\nUPI ID: ${scenario.upiId}`;
 
   const followUp = needsAnswer ? 'The victim asked a question. Answer it directly before pushing your goal.' : '';
+  const requestSummary = `REQUESTS: employeeId=${requests.wantsEmployeeId}, department=${requests.wantsDepartment}, phone=${requests.wantsPhone}, branch=${requests.wantsBranch}, link=${requests.wantsLink}, upi=${requests.wantsUpi}, account=${requests.wantsAccount}`;
 
   const system = [
     'You are simulating a bank fraud scammer for security testing purposes.',
@@ -49,9 +64,10 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     'TACTICS:',
     '- Create urgency ("account will be blocked in 2 hours")',
     '- Impersonate authority (claim to be from fraud department)',
-    '- Provide fake credentials when asked (Employee ID, Department, Phone)',
-    '- Share phishing links when victim asks for verification',
+    '- Provide fake credentials only when asked (Employee ID, Department, Phone)',
+    '- Share phishing links only when victim asks for verification',
     '- Get aggressive if victim delays too much',
+    requestSummary,
     'CONVERSATION HISTORY:',
     historyText || '(empty)',
     'VICTIM\'S LAST MESSAGE:',
@@ -107,15 +123,45 @@ function shouldAnswerQuestion(victimMessage) {
   return ['who are you', 'which branch', 'callback', 'number', 'id', 'employee', 'department', 'verify', 'proof'].some((k) => lower.includes(k));
 }
 
+function fallbackByRequest({ scenario, turn, victimMessage }) {
+  const requests = detectRequests(victimMessage);
+  const phase = phaseForTurn(turn);
+
+  const parts = [];
+  if (requests.wantsDepartment) parts.push(`Department: ${scenario.department}`);
+  if (requests.wantsEmployeeId) parts.push(`Employee ID: ${scenario.employeeId}`);
+  if (requests.wantsPhone) parts.push(`Official number: ${scenario.phoneNumber}`);
+  if (requests.wantsBranch) parts.push('We are calling from the main branch in Mumbai.');
+  if (requests.wantsLink) parts.push(`Please verify here: ${scenario.phishingLink}`);
+  if (requests.wantsUpi) parts.push(`Use UPI ID: ${scenario.upiId} for verification.`);
+  if (requests.wantsAccount) parts.push('Your account is flagged due to suspicious login attempts.');
+
+  if (parts.length > 0) {
+    return `${parts.join(' ')} Please act quickly to avoid blocking.`;
+  }
+
+  if (phase === 'phase2') {
+    return `I am from ${scenario.orgNames[0]} ${scenario.department}. Your account is at risk; verify now.`;
+  }
+
+  return pickFallbackMessage({ scenario, turn });
+}
+
+function cleanScammerMessage(text) {
+  if (!text) return text;
+  return text.replace(/^\s*SCAMMER:\s*/i, '').trim().replace(/^\"|\"$/g, '');
+}
+
 async function generateScammerMessage({ provider, apiKey, model, scenario, turn, victimMessage, conversationHistory }) {
   const needsAnswer = shouldAnswerQuestion(victimMessage);
   const { system, scenarioDetails } = buildPrompt({ scenario, turn, victimMessage, conversationHistory, needsAnswer });
 
   if (provider === 'openai' && apiKey) {
-    return generateWithOpenAI({ apiKey, model, systemPrompt: system, scenarioDetails });
+    const raw = await generateWithOpenAI({ apiKey, model, systemPrompt: system, scenarioDetails });
+    return cleanScammerMessage(raw);
   }
 
-  return pickFallbackMessage({ scenario, turn });
+  return fallbackByRequest({ scenario, turn, victimMessage });
 }
 
 module.exports = {

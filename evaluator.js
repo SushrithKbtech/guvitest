@@ -27,7 +27,14 @@ function extractIntelligenceFromText(text, scenario, intelligence) {
   const lower = text.toLowerCase();
 
   const urlMatches = text.match(/https?:\/\/[^\s)]+/gi) || [];
-  addAll(intelligence.phishingLinks, urlMatches);
+  const mdUrlMatches = [];
+  const mdRegex = /\((https?:\/\/[^)]+)\)/g;
+  let mdMatch;
+  while ((mdMatch = mdRegex.exec(text)) !== null) {
+    mdUrlMatches.push(mdMatch[1]);
+  }
+  const cleanUrls = [...urlMatches, ...mdUrlMatches].map((url) => url.replace(/[.,)\]]+$/g, ''));
+  addAll(intelligence.phishingLinks, cleanUrls);
 
   const upiMatches = text.match(/\b[\w.-]{2,}@[a-zA-Z]{2,}\b/g) || [];
   addAll(intelligence.upiIds, upiMatches);
@@ -39,7 +46,9 @@ function extractIntelligenceFromText(text, scenario, intelligence) {
   addAll(intelligence.employeeIds, employeeMatches.map((v) => v.toUpperCase()));
 
   const accountMatches = text.match(/\b\d{9,18}\b/g) || [];
-  addAll(intelligence.bankAccounts, accountMatches.filter((v) => v.length >= 9));
+  const phoneDigits = new Set(phoneMatches.map((p) => p.replace(/\D/g, '')));
+  const filteredAccounts = accountMatches.filter((v) => !phoneDigits.has(v));
+  addAll(intelligence.bankAccounts, filteredAccounts.filter((v) => v.length >= 9));
 
   if (scenario?.orgNames) {
     scenario.orgNames.forEach((org) => {

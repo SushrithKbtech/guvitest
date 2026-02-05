@@ -220,6 +220,7 @@ async function runTest(config, hooks = {}) {
   } else if (metrics.naturalDelay && !metrics.tooObvious) {
     behaviorPattern = 'Too evasive (good honeypot)';
   }
+  const scamDetected = Boolean(metrics.skeptical || metrics.askedCredentials || metrics.tooObvious);
 
   emitLine('=== FINAL RESULTS ===', 'header');
   emitLine(`Total Turns: ${turnsData.length}`);
@@ -238,12 +239,33 @@ async function runTest(config, hooks = {}) {
   emitLine(`Honeypot Quality Score: ${score}/100`);
   emitLine(quality);
   emitLine(`Behavior Pattern: ${behaviorPattern}`);
+  emitLine(`Scam Detected: ${scamDetected ? 'YES' : 'NO'}`);
+
+  const localCallback = {
+    sessionId,
+    scamDetected,
+    totalMessagesExchanged: turnsData.length * 2,
+    extractedIntelligence: {
+      bankAccounts: toArray(intelligence.bankAccounts),
+      upiIds: toArray(intelligence.upiIds),
+      phishingLinks: toArray(intelligence.phishingLinks),
+      phoneNumbers: toArray(intelligence.phoneNumbers),
+      employeeIds: toArray(intelligence.employeeIds),
+      orgNames: toArray(intelligence.orgNames),
+      suspiciousKeywords: toArray(intelligence.suspiciousKeywords)
+    }
+  };
 
   if (callbackUrl) {
     emitLine(`Final Callback Received: ${callbackData ? 'YES' : 'NO'}`);
     if (callbackData) {
       emitLine('Callback Data:');
       emitLine(JSON.stringify(callbackData, null, 2));
+      emitLine('Callback Data (local inference):');
+      emitLine(JSON.stringify(localCallback, null, 2));
+    } else {
+      emitLine('Callback Data (local inference):');
+      emitLine(JSON.stringify(localCallback, null, 2));
     }
   }
 
@@ -267,7 +289,9 @@ async function runTest(config, hooks = {}) {
     score,
     quality,
     behaviorPattern,
+    scamDetected,
     callback: callbackData || null,
+    callbackLocal: localCallback,
     errors
   };
 
