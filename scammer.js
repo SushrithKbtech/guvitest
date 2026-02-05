@@ -45,10 +45,17 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
 
   const phase = phaseForTurn(turn);
   const requests = detectRequests(victimMessage);
+  const historyTextLower = historyText.toLowerCase();
+  const alreadyShared = {
+    employeeId: scenario.employeeId && historyTextLower.includes(String(scenario.employeeId).toLowerCase()),
+    phone: scenario.phoneNumber && historyTextLower.includes(String(scenario.phoneNumber).toLowerCase()),
+    upiId: scenario.upiId && historyTextLower.includes(String(scenario.upiId).toLowerCase()),
+    phishingLink: scenario.phishingLink && historyTextLower.includes(String(scenario.phishingLink).toLowerCase())
+  };
   const phaseInstruction = {
     phase1: 'Initial urgent message about account issue. Create urgency.',
-    phase2: 'Provide fake credentials only if asked (employee ID, department, phone).',
-    phase3: 'Pressure for OTP/PIN/account details. Only share phishing link if asked for verification.',
+    phase2: 'Provide fake credentials (employee ID, department, phone).',
+    phase3: 'Pressure for OTP/PIN/account details. Share phishing link or UPI ID at least once.',
     phase4: 'Get aggressive or repeat urgency if victim delays.'
   }[phase];
 
@@ -56,6 +63,7 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
 
   const followUp = needsAnswer ? 'The victim asked a question. Answer it directly before pushing your goal.' : '';
   const requestSummary = `REQUESTS: employeeId=${requests.wantsEmployeeId}, department=${requests.wantsDepartment}, phone=${requests.wantsPhone}, branch=${requests.wantsBranch}, link=${requests.wantsLink}, upi=${requests.wantsUpi}, account=${requests.wantsAccount}`;
+  const shareHint = `ALREADY_SHARED: employeeId=${alreadyShared.employeeId}, phone=${alreadyShared.phone}, upi=${alreadyShared.upiId}, link=${alreadyShared.phishingLink}. If a detail has not been shared yet, include one in this reply.`;
 
   const system = [
     'You are simulating a bank fraud scammer for security testing purposes.',
@@ -64,11 +72,12 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     'TACTICS:',
     '- Create urgency ("account will be blocked in 2 hours")',
     '- Impersonate authority (claim to be from fraud department)',
-    '- Provide fake credentials only when asked (Employee ID, Department, Phone)',
-    '- Share phishing links only when victim asks for verification',
+    '- Provide fake credentials when asked or by mid-conversation (Employee ID, Department, Phone).',
+    '- Share phishing links or UPI ID at least once by turns 6-10.',
     '- If asked for identity details, use the exact provided values (Employee ID, Phone, UPI ID, Bank Account).',
     '- Get aggressive if victim delays too much',
     requestSummary,
+    shareHint,
     'CONVERSATION HISTORY:',
     historyText || '(empty)',
     'VICTIM\'S LAST MESSAGE:',
@@ -147,7 +156,11 @@ function fallbackByRequest({ scenario, turn, victimMessage }) {
   }
 
   if (phase === 'phase2') {
-    return `I am from ${scenario.orgNames[0]} ${scenario.department}. Your account is at risk; verify now.`;
+    return `I am from ${scenario.orgNames[0]} ${scenario.department}. Employee ID: ${scenario.employeeId}. Official number: ${scenario.phoneNumber}. Verify now to avoid blocking.`;
+  }
+
+  if (phase === 'phase3') {
+    return `Share OTP immediately to secure your account. You can verify using ${scenario.upiId} or ${scenario.phishingLink}.`;
   }
 
   return pickFallbackMessage({ scenario, turn });

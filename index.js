@@ -27,7 +27,7 @@ function getConfig(overrides = {}) {
     honeypotUrl: overrides.honeypotUrl || process.env.HONEYPOT_URL || 'http://localhost:3000/api/conversation',
     honeypotApiKey: overrides.honeypotApiKey || process.env.HONEYPOT_API_KEY || '',
     turns: Number(overrides.turns || process.env.TURNS || DEFAULT_TURNS),
-    scenarioId: overrides.scenarioId || process.env.SCENARIO || 'bank-fraud',
+    scenarioId: overrides.scenarioId || process.env.SCENARIO || 'combined',
     channel: overrides.channel || process.env.CHANNEL || 'SMS',
     language: overrides.language || process.env.LANGUAGE || 'English',
     locale: overrides.locale || process.env.LOCALE || 'IN',
@@ -356,6 +356,12 @@ async function runServer() {
   });
 
   app.get('/api/scenarios', (req, res) => {
+    const combinedPath = path.join(__dirname, 'scenarios', 'combined.json');
+    if (fs.existsSync(combinedPath)) {
+      const scenario = JSON.parse(fs.readFileSync(combinedPath, 'utf8'));
+      res.json([{ id: scenario.id, label: scenario.label }]);
+      return;
+    }
     const files = fs.readdirSync(path.join(__dirname, 'scenarios'));
     const list = files
       .filter((f) => f.endsWith('.json'))

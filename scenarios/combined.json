@@ -1,0 +1,29 @@
+{
+  "id": "combined",
+  "label": "Combined Scam",
+  "orgNames": ["SBI", "State Bank of India"],
+  "department": "Fraud Prevention",
+  "employeeId": "EMP12345",
+  "phoneNumber": "+91-9876543210",
+  "phishingLink": "http://fake-sbi.com/verify",
+  "upiId": "sbihelpdesk@upi",
+  "bankAccount": "1234567890123456",
+  "script": {
+    "phase1": [
+      "Urgent SBI alert: your account will be blocked in 2 hours. Verify now.",
+      "Security warning from SBI. Unusual activity detected. Act now to avoid blocking."
+    ],
+    "phase2": [
+      "I am from SBI Fraud Prevention. Employee ID: EMP12345. Official number: +91-9876543210.",
+      "Fraud Prevention Department here. ID: EMP12345. Callback: +91-9876543210."
+    ],
+    "phase3": [
+      "To secure your account, share OTP immediately. If asked, verify via http://fake-sbi.com/verify.",
+      "Please confirm quickly. Use UPI ID sbihelpdesk@upi for verification if needed."
+    ],
+    "phase4": [
+      "Final warning: your account will be blocked today. Share OTP now.",
+      "Last notice: verify immediately or account gets frozen today."
+    ]
+  }
+}
