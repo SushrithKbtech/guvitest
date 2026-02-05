@@ -21,11 +21,3 @@ services:
         value: /callback
       - key: LOG_DIR
         value: logs
-      - key: PUBLIC_BASE_URL
-        sync: false
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: HONEYPOT_URL
-        sync: false
-      - key: HONEYPOT_API_KEY
-        sync: false
