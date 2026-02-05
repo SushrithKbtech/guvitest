@@ -9,8 +9,6 @@ services:
     envVars:
       - key: HOST
         value: 0.0.0.0
-      - key: PORT
-        fromRender: true
       - key: LLM_PROVIDER
         value: openai
       - key: OPENAI_MODEL
@@ -24,10 +22,7 @@ services:
       - key: LOG_DIR
         value: logs
       - key: PUBLIC_BASE_URL
-        fromService:
-          name: guvi-honeypot-tester
-          type: web
-          property: url
+        sync: false
       - key: OPENAI_API_KEY
         sync: false
       - key: HONEYPOT_URL
