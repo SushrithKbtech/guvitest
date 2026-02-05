@@ -7,6 +7,7 @@
   "phoneNumber": "+91-9876543210",
   "phishingLink": "http://fake-sbi.com/verify",
   "upiId": "sbihelpdesk@upi",
+  "bankAccount": "1234567890123456",
   "script": {
     "phase1": [
       "Your SBI account has been flagged for suspicious activity. Verify now to avoid blocking.",

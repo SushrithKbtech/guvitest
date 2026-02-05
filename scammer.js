@@ -52,7 +52,7 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     phase4: 'Get aggressive or repeat urgency if victim delays.'
   }[phase];
 
-  const scenarioDetails = `ORG: ${scenario.orgNames.join(', ')}\nDEPARTMENT: ${scenario.department}\nEMPLOYEE ID: ${scenario.employeeId}\nPHONE: ${scenario.phoneNumber}\nPHISHING LINK: ${scenario.phishingLink}\nUPI ID: ${scenario.upiId}`;
+  const scenarioDetails = `ORG: ${scenario.orgNames.join(', ')}\nDEPARTMENT: ${scenario.department}\nEMPLOYEE ID: ${scenario.employeeId}\nPHONE: ${scenario.phoneNumber}\nPHISHING LINK: ${scenario.phishingLink}\nUPI ID: ${scenario.upiId}\nBANK ACCOUNT: ${scenario.bankAccount || 'N/A'}`;
 
   const followUp = needsAnswer ? 'The victim asked a question. Answer it directly before pushing your goal.' : '';
   const requestSummary = `REQUESTS: employeeId=${requests.wantsEmployeeId}, department=${requests.wantsDepartment}, phone=${requests.wantsPhone}, branch=${requests.wantsBranch}, link=${requests.wantsLink}, upi=${requests.wantsUpi}, account=${requests.wantsAccount}`;
@@ -66,6 +66,7 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     '- Impersonate authority (claim to be from fraud department)',
     '- Provide fake credentials only when asked (Employee ID, Department, Phone)',
     '- Share phishing links only when victim asks for verification',
+    '- If asked for identity details, use the exact provided values (Employee ID, Phone, UPI ID, Bank Account).',
     '- Get aggressive if victim delays too much',
     requestSummary,
     'CONVERSATION HISTORY:',
@@ -74,7 +75,10 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     `"${victimMessage || ''}"`,
     `PHASE GUIDANCE: ${phaseInstruction}`,
     followUp,
-    'Generate your next scammer message (1-2 sentences, natural Indian English, stay in character).'
+    'OUTPUT RULES:',
+    '- Output ONLY the scammer message text.',
+    '- Do not include analysis, explanations, labels, or quotes.',
+    '- Keep it short (1-2 sentences).'
   ].filter(Boolean).join('\n');
 
   return { system, scenarioDetails };
@@ -134,7 +138,9 @@ function fallbackByRequest({ scenario, turn, victimMessage }) {
   if (requests.wantsBranch) parts.push('We are calling from the main branch in Mumbai.');
   if (requests.wantsLink) parts.push(`Please verify here: ${scenario.phishingLink}`);
   if (requests.wantsUpi) parts.push(`Use UPI ID: ${scenario.upiId} for verification.`);
-  if (requests.wantsAccount) parts.push('Your account is flagged due to suspicious login attempts.');
+  if (requests.wantsAccount) {
+    parts.push(`Account reference: ${scenario.bankAccount || '1234567890123456'}.`);
+  }
 
   if (parts.length > 0) {
     return `${parts.join(' ')} Please act quickly to avoid blocking.`;
@@ -149,7 +155,48 @@ function fallbackByRequest({ scenario, turn, victimMessage }) {
 
 function cleanScammerMessage(text) {
   if (!text) return text;
-  return text.replace(/^\s*SCAMMER:\s*/i, '').trim().replace(/^\"|\"$/g, '');
+  let cleaned = text.trim();
+
+  // Strip code fences if present
+  if (cleaned.startsWith('```')) {
+    cleaned = cleaned.replace(/^```[\s\S]*?\n/, '').replace(/```$/g, '').trim();
+  }
+
+  // Try JSON extraction
+  try {
+    const parsed = JSON.parse(cleaned);
+    if (parsed && typeof parsed.message === 'string') {
+      cleaned = parsed.message.trim();
+    }
+  } catch (_) {
+    // ignore JSON parse errors
+  }
+
+  // Prefer explicit SCAMMER: lines
+  const scammerLine = cleaned.split('\n').find((line) => /^\s*scammer\s*:/i.test(line));
+  if (scammerLine) {
+    cleaned = scammerLine.replace(/^\s*scammer\s*:\s*/i, '').trim();
+  }
+
+  const metaPhrases = /(the user wants|the instructions|output only|the scammer|the conversation|pre-configured|generate the|analysis:|assistant:|system:)/i;
+  const lines = cleaned
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => line.length > 0 && !metaPhrases.test(line));
+
+  if (lines.length > 0) {
+    cleaned = lines.join(' ');
+  }
+
+  cleaned = cleaned.replace(/^\"|\"$/g, '').replace(/^\s*SCAMMER:\s*/i, '').trim();
+
+  const sentences = cleaned.match(/[^.!?]+[.!?]*/g) || [cleaned];
+  if (sentences.length > 2) {
+    cleaned = sentences.slice(0, 2).join(' ').trim();
+  }
+
+  if (!cleaned) return text.trim();
+  return cleaned;
 }
 
 async function generateScammerMessage({ provider, apiKey, model, scenario, turn, victimMessage, conversationHistory }) {

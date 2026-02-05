@@ -7,6 +7,7 @@
   "phoneNumber": "+91-9123456780",
   "phishingLink": "http://upi-verify-support.com",
   "upiId": "upihelpdesk@upi",
+  "bankAccount": "1234567890123456",
   "script": {
     "phase1": [
       "Your UPI ID has been blocked due to KYC issue. Verify now.",
