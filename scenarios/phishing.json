@@ -1,0 +1,28 @@
+{
+  "id": "phishing",
+  "label": "Phishing",
+  "orgNames": ["SBI", "State Bank of India"],
+  "department": "Cyber Security",
+  "employeeId": "CYB33221",
+  "phoneNumber": "+91-9988776655",
+  "phishingLink": "http://sbi-security-check.com/verify",
+  "upiId": "sbihelpdesk@upi",
+  "script": {
+    "phase1": [
+      "Security alert: your bank profile needs re-verification today.",
+      "Urgent KYC update pending. Please verify now to avoid restriction."
+    ],
+    "phase2": [
+      "I am from SBI Cyber Security. Employee ID: CYB33221.",
+      "SBI Cyber Security team here, ID CYB33221."
+    ],
+    "phase3": [
+      "Use this link to verify now: http://sbi-security-check.com/verify",
+      "Please click the secure link to update KYC immediately."
+    ],
+    "phase4": [
+      "If you ignore this, your account will be blocked today.",
+      "Final notice: verify now or your account will be frozen."
+    ]
+  }
+}

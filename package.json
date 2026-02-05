@@ -1,0 +1,18 @@
+{
+  "name": "guvi-honeypot-tester",
+  "version": "1.0.0",
+  "description": "GUVI honeypot endpoint tester - scammer simulator",
+  "main": "index.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node index.js",
+    "cli": "node index.js --cli"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "chalk": "^4.1.2",
+    "dotenv": "^16.4.7",
+    "express": "^4.19.2",
+    "minimist": "^1.2.8"
+  }
+}

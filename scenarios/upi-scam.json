@@ -1,0 +1,28 @@
+{
+  "id": "upi-scam",
+  "label": "UPI Scam",
+  "orgNames": ["NPCI", "UPI"],
+  "department": "UPI Support",
+  "employeeId": "UPI88991",
+  "phoneNumber": "+91-9123456780",
+  "phishingLink": "http://upi-verify-support.com",
+  "upiId": "upihelpdesk@upi",
+  "script": {
+    "phase1": [
+      "Your UPI ID has been blocked due to KYC issue. Verify now.",
+      "Urgent UPI alert: your ID will be suspended in 2 hours."
+    ],
+    "phase2": [
+      "I am from UPI Support, ID: UPI88991.",
+      "NPCI UPI team here. Employee ID UPI88991."
+    ],
+    "phase3": [
+      "Share the OTP to reactivate your UPI ID.",
+      "Please confirm by sharing your UPI PIN or OTP (only for verification)."
+    ],
+    "phase4": [
+      "If you delay, your UPI will be blocked today. Share OTP now.",
+      "Final reminder: verify immediately or lose UPI access."
+    ]
+  }
+}

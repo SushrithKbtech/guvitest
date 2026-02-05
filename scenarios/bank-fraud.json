@@ -1,0 +1,28 @@
+{
+  "id": "bank-fraud",
+  "label": "Bank Fraud",
+  "orgNames": ["SBI", "State Bank of India"],
+  "department": "Fraud Prevention",
+  "employeeId": "EMP12345",
+  "phoneNumber": "+91-9876543210",
+  "phishingLink": "http://fake-sbi.com/verify",
+  "upiId": "sbihelpdesk@upi",
+  "script": {
+    "phase1": [
+      "Your SBI account has been flagged for suspicious activity. Verify now to avoid blocking.",
+      "Urgent: SBI security alert. Your account will be blocked in 2 hours without verification."
+    ],
+    "phase2": [
+      "I am from SBI Fraud Prevention. Employee ID: EMP12345.",
+      "This is the SBI Fraud team. Department: Fraud Prevention, ID: EMP12345."
+    ],
+    "phase3": [
+      "To stop the block, share the OTP you will receive now.",
+      "Please confirm your account by sharing OTP or last 4 digits."
+    ],
+    "phase4": [
+      "If you delay, your account will be frozen. Share OTP immediately.",
+      "Last warning: verify now or account gets blocked today."
+    ]
+  }
+}
