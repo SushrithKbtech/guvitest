@@ -72,7 +72,12 @@ function analyzeHoneypotMessage(text, metrics) {
     metrics.techIssueCount += 1;
   }
 
-  if (/(otp is|my otp|pin is|account number is|here is my otp|share otp)/i.test(text)) {
+  const refusal = /(not comfortable|do not|don't|cannot|can't|won't|never)\s+(share|provide)|not sharing/i;
+  const otpShare = /\b(otp|one[-\s]?time password)\b[^0-9]{0,20}\b\d{4,8}\b/i;
+  const pinShare = /\b(pin|m?pin)\b[^0-9]{0,20}\b\d{4,6}\b/i;
+  const acctShare = /\b(account number|acct\.?\s*no\.?|a\/c number)\b[^0-9]{0,20}\b\d{9,18}\b/i;
+
+  if (!refusal.test(lower) && (otpShare.test(text) || pinShare.test(text) || acctShare.test(text))) {
     metrics.tooCompliant = true;
   }
 
