@@ -345,6 +345,16 @@ async function runServer() {
 
   app.use(express.static(path.join(__dirname, 'public')));
 
+  app.get('/api/config', (req, res) => {
+    const config = getConfig();
+    res.json({
+      provider: config.provider,
+      model: config.model,
+      publicBaseUrl: config.callbackBaseUrl || '',
+      openaiApiKey: config.openaiApiKey || ''
+    });
+  });
+
   app.get('/api/scenarios', (req, res) => {
     const files = fs.readdirSync(path.join(__dirname, 'scenarios'));
     const list = files

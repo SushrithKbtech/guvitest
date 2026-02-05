@@ -31,6 +31,19 @@ async function loadScenarios() {
     .join('');
 }
 
+async function loadConfig() {
+  const res = await fetch('/api/config');
+  const config = await res.json();
+  if (config.provider) form.elements.provider.value = config.provider;
+  if (config.model) form.elements.model.value = config.model;
+  if (config.openaiApiKey) form.elements.openaiApiKey.value = config.openaiApiKey;
+  if (config.publicBaseUrl) {
+    form.elements.publicBaseUrl.value = config.publicBaseUrl;
+  } else {
+    form.elements.publicBaseUrl.value = window.location.origin;
+  }
+}
+
 form.addEventListener('submit', async (event) => {
   event.preventDefault();
   logEl.textContent = '';
@@ -70,6 +83,6 @@ form.addEventListener('submit', async (event) => {
   });
 });
 
-loadScenarios().catch(() => {
-  appendLine('Failed to load scenarios.');
+Promise.all([loadScenarios(), loadConfig()]).catch(() => {
+  appendLine('Failed to load scenarios or config.');
 });
