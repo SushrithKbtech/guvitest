@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: guvi-honeypot-tester
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        fromRender: true
+      - key: LLM_PROVIDER
+        value: openai
+      - key: OPENAI_MODEL
+        value: gpt-4o-mini
+      - key: TURNS
+        value: 12
+      - key: SCENARIO
+        value: bank-fraud
+      - key: CALLBACK_PATH
+        value: /callback
+      - key: LOG_DIR
+        value: logs
+      - key: PUBLIC_BASE_URL
+        fromService:
+          name: guvi-honeypot-tester
+          type: web
+          property: url
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: HONEYPOT_URL
+        sync: false
+      - key: HONEYPOT_API_KEY
+        sync: false
