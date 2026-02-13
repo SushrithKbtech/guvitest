@@ -91,6 +91,24 @@
             <div class="panelHint">Summary of score and extracted intelligence.</div>
           </div>
           <div class="resultsGrid" id="resultsSummary"></div>
+
+          <div class="resultsHead resultsHeadTight">
+            <div class="panelTitle">Honeypot Callback</div>
+            <div class="panelHint" id="callbackHint">Waiting for callback.</div>
+          </div>
+          <div class="resultsGrid" id="callbackSummary"></div>
+
+          <div class="resultsHead resultsHeadTight">
+            <div class="panelTitle">Agent Notes</div>
+            <div class="panelHint">From honeypot callback payload.</div>
+          </div>
+          <pre id="agentNotes" class="notesBox"></pre>
+
+          <details class="resultsJsonWrap">
+            <summary>Show callback JSON</summary>
+            <pre id="callbackJson" class="resultsJson"></pre>
+          </details>
+
           <details class="resultsJsonWrap">
             <summary>Show full JSON</summary>
             <pre id="resultJson" class="resultsJson"></pre>

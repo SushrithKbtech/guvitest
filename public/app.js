@@ -6,6 +6,10 @@ const chatEl = document.getElementById('chat');
 const runInfoEl = document.getElementById('runInfo');
 const resultsSummaryEl = document.getElementById('resultsSummary');
 const resultJsonEl = document.getElementById('resultJson');
+const callbackSummaryEl = document.getElementById('callbackSummary');
+const callbackJsonEl = document.getElementById('callbackJson');
+const callbackHintEl = document.getElementById('callbackHint');
+const agentNotesEl = document.getElementById('agentNotes');
 
 const runBtn = document.getElementById('runBtn');
 const clearBtn = document.getElementById('clearBtn');
@@ -48,7 +52,11 @@ function clearOutput() {
   lastHoneypotLatencyEl = null;
   chatEl.innerHTML = '';
   resultsSummaryEl.innerHTML = '';
+  callbackSummaryEl.innerHTML = '';
   resultJsonEl.textContent = '';
+  callbackJsonEl.textContent = '';
+  callbackHintEl.textContent = 'Waiting for callback.';
+  agentNotesEl.textContent = '';
   runInfoEl.textContent = 'Waiting for a run.';
 }
 
@@ -129,8 +137,40 @@ function renderMetric({ label, value, chips }) {
   resultsSummaryEl.appendChild(card);
 }
 
+function renderMetricTo(target, { label, value, chips }) {
+  const card = document.createElement('div');
+  card.className = 'metric';
+
+  const l = document.createElement('div');
+  l.className = 'metricLabel';
+  l.textContent = label;
+
+  const v = document.createElement('div');
+  v.className = 'metricValue';
+  v.textContent = String(value ?? '');
+
+  card.appendChild(l);
+  card.appendChild(v);
+
+  const chipList = Array.isArray(chips) ? chips.filter(Boolean) : [];
+  if (chipList.length > 0) {
+    const chipsWrap = document.createElement('div');
+    chipsWrap.className = 'chips';
+    chipList.slice(0, 60).forEach((item) => {
+      const chip = document.createElement('span');
+      chip.className = 'chip';
+      chip.textContent = String(item);
+      chipsWrap.appendChild(chip);
+    });
+    card.appendChild(chipsWrap);
+  }
+
+  target.appendChild(card);
+}
+
 function renderResults(summary) {
   resultsSummaryEl.innerHTML = '';
+  callbackSummaryEl.innerHTML = '';
   if (!summary || typeof summary !== 'object') return;
 
   const score = summary.score ?? '';
@@ -153,6 +193,37 @@ function renderResults(summary) {
   renderMetric({ label: 'Keywords', value: '', chips: intel.suspiciousKeywords || [] });
 
   resultJsonEl.textContent = JSON.stringify(summary, null, 2);
+
+  const cb = summary.callback || null;
+  if (cb) {
+    callbackHintEl.textContent = 'Callback received.';
+    agentNotesEl.textContent = sanitizeDisplayText(cb.agentNotes || '(no agentNotes in callback)');
+    callbackJsonEl.textContent = JSON.stringify(cb, null, 2);
+
+    renderMetricTo(callbackSummaryEl, { label: 'Session ID', value: cb.sessionId || '(none)' });
+    renderMetricTo(callbackSummaryEl, { label: 'Scam Detected', value: cb.scamDetected ? 'YES' : 'NO' });
+    renderMetricTo(callbackSummaryEl, { label: 'Total Messages', value: cb.totalMessagesExchanged ?? '(none)' });
+
+    const extracted = cb.extractedIntelligence || {};
+    Object.keys(extracted).forEach((key) => {
+      const val = extracted[key];
+      if (Array.isArray(val)) {
+        renderMetricTo(callbackSummaryEl, {
+          label: key,
+          value: val.length ? '' : '(none)',
+          chips: val
+        });
+      } else if (val && typeof val === 'object') {
+        renderMetricTo(callbackSummaryEl, { label: key, value: JSON.stringify(val) });
+      } else {
+        renderMetricTo(callbackSummaryEl, { label: key, value: val ?? '(none)' });
+      }
+    });
+  } else {
+    callbackHintEl.textContent = 'No callback received.';
+    agentNotesEl.textContent = '(no callback agentNotes)';
+    callbackJsonEl.textContent = '';
+  }
 }
 
 function handleLineEvent(evt) {

@@ -333,6 +333,10 @@ input:focus, select:focus {
   margin-bottom: 10px;
 }
 
+.resultsHeadTight {
+  margin-top: 14px;
+}
+
 .resultsGrid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -402,6 +406,20 @@ input:focus, select:focus {
   line-height: 1.35;
 }
 
+.notesBox {
+  margin: 0;
+  padding: 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.10);
+  background: rgba(15, 23, 42, 0.04);
+  overflow: auto;
+  color: rgba(15, 23, 42, 0.86);
+  font-size: 12px;
+  line-height: 1.35;
+  max-height: 180px;
+  white-space: pre-wrap;
+}
+
 @media (max-width: 980px) {
   .layout {
     grid-template-columns: 1fr;
@@ -413,4 +431,3 @@ input:focus, select:focus {
     height: 480px;
   }
 }
-
