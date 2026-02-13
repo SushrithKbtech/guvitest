@@ -14,6 +14,7 @@ const agentNotesEl = document.getElementById('agentNotes');
 const runBtn = document.getElementById('runBtn');
 const clearBtn = document.getElementById('clearBtn');
 const copyBtn = document.getElementById('copyBtn');
+const stopBtn = document.getElementById('stopBtn');
 
 let transcript = [];
 let lastHoneypotLatencyEl = null;
@@ -307,6 +308,13 @@ clearBtn.addEventListener('click', () => {
 });
 
 copyBtn.addEventListener('click', copyTranscript);
+
+stopBtn.addEventListener('click', () => {
+  stopStream();
+  setStatus('Stopped', 'idle');
+  runBtn.disabled = false;
+  addNote('Simulation stopped locally (server may still finish the run).');
+});
 
 form.addEventListener('submit', async (event) => {
   event.preventDefault();

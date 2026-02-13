@@ -225,6 +225,16 @@ input:focus, select:focus {
 
 .btnGhost:hover { background: rgba(15, 23, 42, 0.08); }
 
+.btnDanger {
+  background: rgba(239, 68, 68, 0.12);
+  color: rgba(185, 28, 28, 0.95);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.btnDanger:hover {
+  background: rgba(239, 68, 68, 0.18);
+}
+
 .smallNote {
   margin-top: 10px;
   font-size: 12px;
