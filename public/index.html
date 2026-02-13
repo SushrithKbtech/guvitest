@@ -4,63 +4,99 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>GUVI Honeypot Tester</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <div class="bg" aria-hidden="true"></div>
   <div class="page">
     <header class="hero">
       <div>
-        <h1>GUVI Honeypot Tester</h1>
-        <p>Scammer simulator for multi-turn honeypot API testing.</p>
+        <div class="heroTitle">GUVI Honeypot Tester</div>
+        <div class="heroSub">Clean transcript UI for video demos. Output text is shown as plain text (no markdown bold).</div>
       </div>
       <div class="status" id="status">Idle</div>
     </header>
 
-    <section class="panel">
-      <form id="runForm">
-        <div class="grid">
-          <label>
-            Honeypot API Endpoint URL
-            <input type="url" name="honeypotUrl" placeholder="https://your-honeypot.com/api/conversation" required />
-          </label>
-          <label>
-            x-api-key (Optional)
-            <input type="text" name="honeypotApiKey" placeholder="honeypot-guvi-2026-secure-key" />
-          </label>
-          <label>
-            Turns
-            <input type="number" name="turns" min="1" max="20" value="12" />
-          </label>
-          <label>
-            Scenario
-            <select name="scenarioId" id="scenarioSelect"></select>
-          </label>
-          <label>
-            LLM Provider
-            <select name="provider">
-              <option value="openai">OpenAI</option>
-              <option value="none">Fallback (no LLM)</option>
-            </select>
-          </label>
-          <label>
-            OpenAI API Key
-            <input type="password" name="openaiApiKey" placeholder="sk-..." />
-          </label>
-          <label>
-            OpenAI Model
-            <input type="text" name="model" value="gpt-4o-mini" />
-          </label>
-          <label>
-            Public Base URL
-            <input type="text" name="publicBaseUrl" placeholder="http://192.168.1.10:8080" />
-          </label>
+    <section class="layout">
+      <aside class="panel panelDark">
+        <div class="panelHead">
+          <div>
+            <div class="panelTitle">Run Config</div>
+            <div class="panelHint">Configure endpoint, scenario and turns.</div>
+          </div>
         </div>
-        <button class="run" type="submit">Run Test</button>
-      </form>
-    </section>
+        <form id="runForm">
+          <div class="grid">
+            <label>
+              Honeypot API Endpoint URL
+              <input type="url" name="honeypotUrl" placeholder="https://your-honeypot.com/api/conversation" required />
+            </label>
+            <label>
+              x-api-key (Optional)
+              <input type="text" name="honeypotApiKey" placeholder="honeypot-guvi-2026-secure-key" />
+            </label>
+            <label>
+              Turns
+              <input type="number" name="turns" min="1" max="20" value="12" />
+            </label>
+            <label>
+              Scenario
+              <select name="scenarioId" id="scenarioSelect"></select>
+            </label>
+            <label>
+              LLM Provider
+              <select name="provider">
+                <option value="openai">OpenAI</option>
+                <option value="none">Fallback (no LLM)</option>
+              </select>
+            </label>
+            <label>
+              OpenAI API Key
+              <input type="password" name="openaiApiKey" placeholder="sk-..." />
+            </label>
+            <label>
+              OpenAI Model
+              <input type="text" name="model" value="gpt-4o-mini" />
+            </label>
+            <label>
+              Public Base URL
+              <input type="text" name="publicBaseUrl" placeholder="http://192.168.1.10:8080" />
+            </label>
+          </div>
+          <button class="btn btnPrimary" id="runBtn" type="submit">Run Test</button>
+          <div class="smallNote">Tip: For local testing use `http://localhost:3000/api/conversation`.</div>
+        </form>
+      </aside>
 
-    <section class="panel output">
-      <pre id="log"></pre>
+      <main class="panel panelLight">
+        <div class="panelHead panelHeadRow">
+          <div>
+            <div class="panelTitle">Conversation</div>
+            <div class="panelHint" id="runInfo">Waiting for a run.</div>
+          </div>
+          <div class="panelActions">
+            <button class="btn btnGhost" id="clearBtn" type="button">Clear</button>
+            <button class="btn btnGhost" id="copyBtn" type="button">Copy</button>
+          </div>
+        </div>
+
+        <div class="chat" id="chat" role="log" aria-live="polite" aria-relevant="additions"></div>
+
+        <section class="results">
+          <div class="resultsHead">
+            <div class="panelTitle">Results</div>
+            <div class="panelHint">Summary of score and extracted intelligence.</div>
+          </div>
+          <div class="resultsGrid" id="resultsSummary"></div>
+          <details class="resultsJsonWrap">
+            <summary>Show full JSON</summary>
+            <pre id="resultJson" class="resultsJson"></pre>
+          </details>
+        </section>
+      </main>
     </section>
   </div>
 
