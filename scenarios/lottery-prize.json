@@ -1,0 +1,27 @@
+{
+  "id": "lottery-prize",
+  "label": "Lottery / Prize Money",
+  "orgNames": ["Lucky Draw Dept", "Prize Office"],
+  "department": "Rewards",
+  "employeeId": "PRZ9001",
+  "phoneNumber": "+91-9090909090",
+  "upiId": "prizeclaim@upi",
+  "script": {
+    "phase1": [
+      "Congratulations! You have won Rs. 25 lakh in our lucky draw.",
+      "You are selected for a prize of Rs. 25 lakh. Claim now."
+    ],
+    "phase2": [
+      "I am from the Prize Office. Employee ID PRZ9001.",
+      "Rewards department here. ID PRZ9001."
+    ],
+    "phase3": [
+      "Pay the processing fee of Rs. 5000 to claim the prize.",
+      "Send the fee to get your prize released today."
+    ],
+    "phase4": [
+      "If you delay, your prize will be canceled.",
+      "Final notice: pay now to secure your winnings."
+    ]
+  }
+}

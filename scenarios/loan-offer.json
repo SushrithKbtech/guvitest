@@ -1,0 +1,27 @@
+{
+  "id": "loan-offer",
+  "label": "Instant Loan Offer",
+  "orgNames": ["Quick Loan Services", "Finance Dept"],
+  "department": "Loan Processing",
+  "employeeId": "LN2201",
+  "phoneNumber": "+91-9000022201",
+  "phishingLink": "http://instant-loan-verify.com",
+  "script": {
+    "phase1": [
+      "Your loan of Rs. 2 lakh is approved. Verify to disburse today.",
+      "Instant loan approved. Complete verification for fast transfer."
+    ],
+    "phase2": [
+      "Loan Processing team here. Employee ID LN2201.",
+      "This is Quick Loan Services. ID LN2201."
+    ],
+    "phase3": [
+      "Pay a small processing fee to release the loan.",
+      "Click the link to verify KYC and pay processing charges."
+    ],
+    "phase4": [
+      "If you delay, approval will expire.",
+      "Final notice: complete verification to avoid cancellation."
+    ]
+  }
+}

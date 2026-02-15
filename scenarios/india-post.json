@@ -1,0 +1,27 @@
+{
+  "id": "india-post",
+  "label": "India Post / Delivery Hold",
+  "orgNames": ["India Post", "Delivery Center"],
+  "department": "Parcel Clearance",
+  "employeeId": "POST1122",
+  "phoneNumber": "+91-9090999900",
+  "phishingLink": "http://indiapost-track.com/pay",
+  "script": {
+    "phase1": [
+      "Your parcel is held due to incomplete address. Pay Rs. 20 to release.",
+      "India Post alert: package on hold, pay small fee to proceed."
+    ],
+    "phase2": [
+      "This is India Post Parcel Clearance. ID POST1122.",
+      "Delivery center here, employee ID POST1122."
+    ],
+    "phase3": [
+      "Use the link to pay the release fee.",
+      "Share the tracking ID to confirm and pay the fee."
+    ],
+    "phase4": [
+      "If not paid today, parcel will be returned.",
+      "Final notice: pay now to avoid return."
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "id": "malicious-apk",
+  "label": "Malicious APK / App Install",
+  "orgNames": ["HDFC Bank", "HDFC"],
+  "department": "Security Update",
+  "employeeId": "SEC5521",
+  "phoneNumber": "+91-9012345678",
+  "phishingLink": "http://hdfc-secure-app.com/download.apk",
+  "script": {
+    "phase1": [
+      "Security update required. Install our app to protect your account.",
+      "Your account needs a security patch. Download the app now."
+    ],
+    "phase2": [
+      "I am from HDFC Security Update team. ID SEC5521.",
+      "This is the HDFC Security team, employee ID SEC5521."
+    ],
+    "phase3": [
+      "Please install the APK we sent to complete verification.",
+      "Open the app and follow the steps to secure your account."
+    ],
+    "phase4": [
+      "If you do not install, your account may be blocked.",
+      "Install immediately to avoid account restriction."
+    ]
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "id": "kyc-update",
+  "label": "KYC Update",
+  "orgNames": ["SBI", "State Bank of India"],
+  "department": "KYC Verification",
+  "employeeId": "KYC7781",
+  "phoneNumber": "+91-9000012345",
+  "phishingLink": "http://sbi-kyc-verify.com",
+  "upiId": "sbihelpdesk@upi",
+  "script": {
+    "phase1": [
+      "KYC update pending. Your SBI account will be restricted if not updated today.",
+      "Urgent KYC notice: verify your details now to avoid account suspension."
+    ],
+    "phase2": [
+      "I am from SBI KYC Verification, ID KYC7781.",
+      "This is the KYC compliance team. Employee ID KYC7781."
+    ],
+    "phase3": [
+      "Click the verification link and confirm your details.",
+      "We need verification via the link to keep your account active."
+    ],
+    "phase4": [
+      "If you delay, your account will be blocked. Verify immediately.",
+      "Last warning: account suspension within 2 hours if KYC is not updated."
+    ]
+  }
+}

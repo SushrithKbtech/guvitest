@@ -370,22 +370,11 @@ async function runServer() {
   });
 
   app.get('/api/scenarios', (req, res) => {
-    const combinedPath = path.join(__dirname, 'scenarios', 'combined.json');
-    if (fs.existsSync(combinedPath)) {
-      const scenario = JSON.parse(fs.readFileSync(combinedPath, 'utf8'));
-      res.json([
-        { id: 'random', label: 'Random (rotates each run)' },
-        { id: scenario.id, label: scenario.label }
-      ]);
-      return;
-    }
-    const files = fs.readdirSync(path.join(__dirname, 'scenarios'));
-    const list = files
-      .filter((f) => f.endsWith('.json'))
-      .map((f) => {
-        const scenario = JSON.parse(fs.readFileSync(path.join(__dirname, 'scenarios', f), 'utf8'));
-        return { id: scenario.id, label: scenario.label };
-      });
+    const files = listScenarioFiles();
+    const list = files.map((f) => {
+      const scenario = JSON.parse(fs.readFileSync(path.join(__dirname, 'scenarios', f), 'utf8'));
+      return { id: scenario.id, label: scenario.label };
+    });
     res.json([{ id: 'random', label: 'Random (rotates each run)' }, ...list]);
   });
 

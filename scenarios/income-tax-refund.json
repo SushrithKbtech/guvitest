@@ -1,0 +1,27 @@
+{
+  "id": "income-tax-refund",
+  "label": "Income Tax Refund",
+  "orgNames": ["Income Tax Department", "IT Dept"],
+  "department": "Refunds",
+  "employeeId": "ITR4432",
+  "phoneNumber": "+91-9080706050",
+  "phishingLink": "http://it-refund-status.com/verify",
+  "script": {
+    "phase1": [
+      "Income Tax refund of Rs. 45,000 pending. Verify bank details now.",
+      "Refund pending from IT Dept. Update details to receive Rs. 45,000."
+    ],
+    "phase2": [
+      "I am from IT Refunds. Employee ID ITR4432.",
+      "This is Income Tax Refunds department. ID ITR4432."
+    ],
+    "phase3": [
+      "Click the verification link to receive the refund.",
+      "Share details on the link to get refund credited."
+    ],
+    "phase4": [
+      "If not verified today, refund will be canceled.",
+      "Final notice: verify now to avoid refund loss."
+    ]
+  }
+}

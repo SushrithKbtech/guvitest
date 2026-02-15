@@ -1,0 +1,27 @@
+{
+  "id": "traffic-challan",
+  "label": "Traffic Challan Penalty",
+  "orgNames": ["Traffic Police", "Transport Dept"],
+  "department": "E-Challan",
+  "employeeId": "CHAL3344",
+  "phoneNumber": "+91-9887766554",
+  "phishingLink": "http://echallan-pay.com/verify",
+  "script": {
+    "phase1": [
+      "Unpaid traffic challan of Rs. 500 pending. Pay immediately.",
+      "E-challan penalty due. Clear now to avoid court action."
+    ],
+    "phase2": [
+      "This is E-Challan department. ID CHAL3344.",
+      "Traffic Police E-Challan here, employee ID CHAL3344."
+    ],
+    "phase3": [
+      "Pay the challan using the link provided.",
+      "Share vehicle number and pay the penalty now."
+    ],
+    "phase4": [
+      "If you delay, case will be forwarded to court.",
+      "Final notice: pay immediately to avoid legal action."
+    ]
+  }
+}

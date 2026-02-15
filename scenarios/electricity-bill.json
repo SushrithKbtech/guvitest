@@ -1,0 +1,27 @@
+{
+  "id": "electricity-bill",
+  "label": "Electricity Bill Disconnection",
+  "orgNames": ["Electricity Board", "Power Dept"],
+  "department": "Billing",
+  "employeeId": "EB3340",
+  "phoneNumber": "+91-9911223344",
+  "phishingLink": "http://power-bill-pay.com",
+  "script": {
+    "phase1": [
+      "Your electricity bill is overdue. Power will be disconnected tonight.",
+      "Urgent: unpaid bill. Pay now to avoid disconnection."
+    ],
+    "phase2": [
+      "This is Electricity Board Billing. ID EB3340.",
+      "Power Dept billing team here, employee ID EB3340."
+    ],
+    "phase3": [
+      "Pay immediately via the link to restore service.",
+      "Share your consumer number and pay the dues now."
+    ],
+    "phase4": [
+      "If you delay, disconnection will happen today.",
+      "Final warning: pay now to avoid power cut."
+    ]
+  }
+}

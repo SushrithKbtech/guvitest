@@ -1,0 +1,27 @@
+{
+  "id": "sim-swap-remote",
+  "label": "SIM Swap / Remote Access",
+  "orgNames": ["Bank Security", "Account Support"],
+  "department": "Security Operations",
+  "employeeId": "SEC9988",
+  "phoneNumber": "+91-9870001122",
+  "phishingLink": "http://secure-access-help.com/download",
+  "script": {
+    "phase1": [
+      "Your SIM is under attack. We need to secure your account immediately.",
+      "Security alert: SIM swap attempt detected. Verify now."
+    ],
+    "phase2": [
+      "I am from Security Operations. Employee ID SEC9988.",
+      "Account Security here, ID SEC9988."
+    ],
+    "phase3": [
+      "Install AnyDesk to complete verification.",
+      "Open the remote access app so we can secure your account."
+    ],
+    "phase4": [
+      "If you delay, your account could be blocked.",
+      "Last warning: connect now to avoid loss."
+    ]
+  }
+}
