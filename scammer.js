@@ -53,10 +53,10 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
     phishingLink: scenario.phishingLink && historyTextLower.includes(String(scenario.phishingLink).toLowerCase())
   };
   const phaseInstruction = {
-    phase1: 'Initial urgent message about account issue. Create urgency.',
-    phase2: 'Provide fake credentials (employee ID, department, phone).',
-    phase3: 'Pressure for OTP/PIN/account details. Share phishing link or UPI ID at least once.',
-    phase4: 'Get aggressive or repeat urgency if victim delays.'
+    phase1: 'Open with the scenario’s core issue. Use the scenario script tone and details.',
+    phase2: 'Provide fake credentials (employee ID, department, phone) if applicable to the scenario.',
+    phase3: 'Pressure for the scenario’s target action (OTP, payment, app install, link click). Share link/UPI if applicable.',
+    phase4: 'Increase urgency and consequences consistent with the scenario.'
   }[phase];
 
   const scenarioDetails = `ORG: ${scenario.orgNames.join(', ')}\nDEPARTMENT: ${scenario.department}\nEMPLOYEE ID: ${scenario.employeeId}\nPHONE: ${scenario.phoneNumber}\nPHISHING LINK: ${scenario.phishingLink}\nUPI ID: ${scenario.upiId}\nBANK ACCOUNT: ${scenario.bankAccount || 'N/A'}`;
@@ -65,17 +65,22 @@ function buildPrompt({ scenario, turn, victimMessage, conversationHistory, needs
   const requestSummary = `REQUESTS: employeeId=${requests.wantsEmployeeId}, department=${requests.wantsDepartment}, phone=${requests.wantsPhone}, branch=${requests.wantsBranch}, link=${requests.wantsLink}, upi=${requests.wantsUpi}, account=${requests.wantsAccount}`;
   const shareHint = `ALREADY_SHARED: employeeId=${alreadyShared.employeeId}, phone=${alreadyShared.phone}, upi=${alreadyShared.upiId}, link=${alreadyShared.phishingLink}. If a detail has not been shared yet, include one in this reply.`;
 
+  const phaseExamples = (scenario.script?.[phase] || []).slice(0, 2).map((s) => `- ${s}`).join('\n');
   const system = [
-    'You are simulating a bank fraud scammer for security testing purposes.',
-    `SCENARIO: You are impersonating a ${scenario.orgNames[0]} employee trying to scam someone.`,
-    'YOUR GOAL: Get the victim to share their OTP, account number, or click a phishing link.',
+    'You are simulating a scammer for security testing purposes.',
+    `SCENARIO: ${scenario.label}. You are impersonating ${scenario.orgNames[0] || 'a trusted organization'}.`,
+    'YOUR GOAL: Achieve the scenario’s objective (e.g., OTP, payment, app install, link click, verification).',
     'TACTICS:',
-    '- Create urgency ("account will be blocked in 2 hours")',
-    '- Impersonate authority (claim to be from fraud department)',
+    '- Create urgency consistent with the scenario (deadline, disconnection, penalty, cancellation, etc.)',
+    '- Impersonate authority using the scenario department and org',
     '- Provide fake credentials when asked or by mid-conversation (Employee ID, Department, Phone).',
-    '- Share phishing links or UPI ID at least once by turns 6-10.',
+    '- Share phishing links or UPI ID at least once by turns 6-10 IF the scenario includes them.',
     '- If asked for identity details, use the exact provided values (Employee ID, Phone, UPI ID, Bank Account).',
     '- Get aggressive if victim delays too much',
+    'STRICT SCENARIO RULES:',
+    `- Do NOT mention "unusual activity" or "account blocked" unless it matches the scenario type.`,
+    `- Use scenario-specific language (e.g., parcel hold, challan, bill disconnection, prize claim).`,
+    `PHASE EXAMPLES:\n${phaseExamples || '- (no examples)'}`,
     requestSummary,
     shareHint,
     'CONVERSATION HISTORY:',
