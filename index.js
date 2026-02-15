@@ -43,6 +43,19 @@ function getConfig(overrides = {}) {
   };
 }
 
+function listScenarioFiles() {
+  const dir = path.join(__dirname, 'scenarios');
+  if (!fs.existsSync(dir)) return [];
+  return fs.readdirSync(dir).filter((f) => f.endsWith('.json'));
+}
+
+function pickRandomScenarioId() {
+  const files = listScenarioFiles();
+  if (files.length === 0) return 'combined';
+  const idx = Math.floor(Math.random() * files.length);
+  return path.basename(files[idx], '.json');
+}
+
 async function sendToHoneypot({ url, apiKey, payload, timeoutMs }) {
   const headers = {
     'Content-Type': 'application/json'
@@ -65,7 +78,8 @@ function ensureDir(dir) {
 }
 
 async function runTest(config, hooks = {}) {
-  const scenario = loadScenario(config.scenarioId);
+  const scenarioId = (!config.scenarioId || config.scenarioId === 'random') ? pickRandomScenarioId() : config.scenarioId;
+  const scenario = loadScenario(scenarioId);
   const sessionId = randomUUID();
   const callbackUrl = config.callbackBaseUrl
     ? `${config.callbackBaseUrl}${config.callbackPath}?sessionId=${sessionId}`
@@ -359,7 +373,10 @@ async function runServer() {
     const combinedPath = path.join(__dirname, 'scenarios', 'combined.json');
     if (fs.existsSync(combinedPath)) {
       const scenario = JSON.parse(fs.readFileSync(combinedPath, 'utf8'));
-      res.json([{ id: scenario.id, label: scenario.label }]);
+      res.json([
+        { id: 'random', label: 'Random (rotates each run)' },
+        { id: scenario.id, label: scenario.label }
+      ]);
       return;
     }
     const files = fs.readdirSync(path.join(__dirname, 'scenarios'));
@@ -369,7 +386,7 @@ async function runServer() {
         const scenario = JSON.parse(fs.readFileSync(path.join(__dirname, 'scenarios', f), 'utf8'));
         return { id: scenario.id, label: scenario.label };
       });
-    res.json(list);
+    res.json([{ id: 'random', label: 'Random (rotates each run)' }, ...list]);
   });
 
   app.post('/api/run', async (req, res) => {
